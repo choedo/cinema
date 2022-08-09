@@ -1,0 +1,53 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-size: 10px;
+}
+
+.container {
+    min-height: 100vh;
+    width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+h1 {
+    font-size: 3rem;
+}
+
+#seatBox {
+    margin: 2rem 0;
+    width: 100%;
+}
+#seatBox tr {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+#seatBox tr td {
+    width: 50px;
+    height: 50px;
+    border-radius: 0.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+button {
+    width: 100%;
+    height: 50px;
+    cursor: pointer;
+    font-size: 1.8rem;
+    color: #000099;
+    border: 1px solid #000;
+    background: none;
+}

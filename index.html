@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>좌석 예매 시스템</title>
+        <link rel="stylesheet" href="./style.css">
+    </head>
+    <body>
+        <div class="container">
+            <h1>좌석 예매 시스템</h1>
+            <table id="seatBox"></table>
+            <button onclick="booking(choiceSeat)">예약 완료</button>
+        </div>
+
+        <script>
+            'use strict';
+
+            const seatBox = document.getElementById('seatBox');
+            const seatArray = Array.from(Array(10), () => new Array(14)); // 14 * 10 이차원배열 생성
+            const rowNum = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']; // 행 번호를 위한 배열
+            const choiceSeat = []; // 선택된 좌석을 배열에 넣음
+
+            for(let i = 0; i < seatArray.length; i++) {
+                let innerText;
+                seatBox.innerHTML += `<tr id=${rowNum[i]}>`;
+
+                for(let j = 0; j < seatArray[0].length; j++) {
+                    if((i == 0 && j > 4 && j < 9) || (j == 2 || j == 11) || (i == 5)) { // 통로 설정
+                        seatArray[i][j] = [rowNum[i] + j, 0];
+                        innerText = '';
+                    }else if(i == 1 && j > 2 && j < 6) { // 예매된 좌석 설정
+                        seatArray[i][j] = [rowNum[i] + j, 3];
+                        innerText = rowNum[i] + j;
+                    }else {
+                        seatArray[i][j] = [rowNum[i] + j, 1];
+                        innerText = rowNum[i] + j;
+                    }    
+
+                    document.getElementById(rowNum[i]).innerHTML += `
+                        <td id=${rowNum[i] + j} onclick="choice('${i}', '${j}')">
+                            ${innerText}
+                        </td>
+                    `;
+                    seatState(i, j);
+                }
+                seatBox.innerHTML += '</tr>';
+            }
+
+            function seatState(i, j) { // 좌석 상태에 따른 관리 함수
+                let state;
+                if(seatArray[i][j][1] == 0) { // 통로일 경우
+                    state = '#fff';
+                    document.getElementById(seatArray[i][j][0]).style.cursor = 'default';
+                    document.getElementById(seatArray[i][j][0]).style.pointerEvents = 'none';
+                }else if(seatArray[i][j][1] == 1) { // 선택가능한 좌석일 경우
+                    state = '#88ff88';
+                }else if(seatArray[i][j][1] == 2) { // 선택된 좌석일 경우
+                    state = '#ff5555';
+                }else if(seatArray[i][j][1] == 3) { // 예매된 좌석일 경우
+                    state = '#e5e5e5';
+                }
+                document.getElementById(seatArray[i][j][0]).style.background = state;
+            }
+
+            function choice(i, j) {
+                if(seatArray[i][j][1] == 3) { // 예매된 좌석 클릭 시
+                    alert('이미 예매된 좌석입니다.');
+                    return false;
+                }
+
+                if(seatArray[i][j][1] == 1) { // 예매 가능한 좌석일 경우
+                    seatArray[i][j].splice(1, 1, 2);
+                    choiceSeat.push(seatArray[i][j]);
+
+                }else if(seatArray[i][j][1] == 2) { // 선택한 좌석을 다시 클릭했을 경우
+                    seatArray[i][j].splice(1, 1, 1);
+
+                    for(let k = 0; k < choiceSeat.length; k++) { // 반복하면서 취소한 좌석의 인덱스 번호 추출
+                        if(choiceSeat[k] == seatArray[i][j]) {
+                            choiceSeat.splice(choiceSeat.indexOf(seatArray[i][j]), 1);
+                        }
+                    }
+                }
+                seatState(i, j);
+            }
+
+            function booking(choice) {
+                if(choice.length == 0) { // 선택된 좌석이 없을 경우
+                    alert('선택된 좌석이 없습니다.');
+                    return false;
+                }
+
+                if(confirm('예매하시겠습니까?')) {
+                    for(let i = 0; i < seatArray.length; i++) {
+                        for(let j = 0; j < seatArray[i].length; j++) {
+                            for(let k = 0; k < choiceSeat.length; k++) { // 해당하는 좌석 예매
+                                if(seatArray[i][j] == choice[k]) {
+                                    seatArray[i][j].splice(1, 1, 3);
+                                    seatState(i, j);
+                                }
+                            }
+                        }
+                    }
+
+                    alert('예매되었습니다.');
+                    choiceSeat.splice(0); // 선택된 좌석 배열 초기화
+                }else {
+                    alert('취소되었습니다.');
+                    return false;
+                }
+            }
+        </script>
+    </body>
+</html>
